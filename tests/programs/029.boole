@@ -1,0 +1,4 @@
+s = "xyz"
+print(s[1])
+
+# expect: y

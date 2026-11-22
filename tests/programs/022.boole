@@ -1,0 +1,4 @@
+name = "Boole"
+print(f"hi {name}")
+
+# expect: hi Boole

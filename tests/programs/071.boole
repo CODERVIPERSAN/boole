@@ -1,0 +1,7 @@
+def with_default(a, b=10):
+    return a + b
+print(with_default(5))
+print(with_default(5, 1))
+
+# expect: 15
+# expect: 6

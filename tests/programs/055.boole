@@ -1,0 +1,4 @@
+pass
+print("done")
+
+# expect: done

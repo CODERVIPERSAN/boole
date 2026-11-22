@@ -1,0 +1,5 @@
+def kw(a, b):
+    return a - b
+print(kw(b=3, a=10))
+
+# expect: 7

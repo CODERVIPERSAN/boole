@@ -1,0 +1,11 @@
+class Counter:
+    def __init__(self, n):
+        self.n = n
+    def inc(self):
+        self.n += 1
+c = Counter(0)
+c.inc()
+c.inc()
+print(c.n)
+
+# expect: 2

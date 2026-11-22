@@ -1,0 +1,4 @@
+assert True
+print("ok")
+
+# expect: ok

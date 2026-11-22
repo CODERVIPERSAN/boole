@@ -1,0 +1,6 @@
+class Box:
+    def __init__(self, v):
+        self.v = v
+print(Box(9).v)
+
+# expect: 9

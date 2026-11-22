@@ -1,0 +1,4 @@
+s = "abcdef"
+print(s[1:4])
+
+# expect: bcd

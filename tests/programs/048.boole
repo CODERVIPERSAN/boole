@@ -1,0 +1,6 @@
+n = 0
+while n < 3:
+    n += 1
+print(n)
+
+# expect: 3

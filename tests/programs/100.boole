@@ -1,0 +1,4 @@
+msg = "Boole"
+print(f"{msg} ready")
+
+# expect: Boole ready

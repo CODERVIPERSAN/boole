@@ -1,0 +1,9 @@
+def early(n):
+    if n < 0:
+        return 0
+    return n
+print(early(-1))
+print(early(4))
+
+# expect: 0
+# expect: 4

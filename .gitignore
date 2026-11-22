@@ -1,0 +1,34 @@
+# Build
+/target/
+/build/
+/dist/
+*.bin
+/tmp/
+*.o
+*.a
+*.so
+*.dylib
+*.exe
+
+# Tooling
+.cache/
+.idea/
+.vscode/
+*.swp
+*~
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+.venv/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets / local
+.env
+.env.*
+*.pem
+*.key

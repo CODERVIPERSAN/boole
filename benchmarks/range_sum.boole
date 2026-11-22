@@ -1,0 +1,4 @@
+total = 0
+for n in range(5000000):
+    total += n
+print(total)

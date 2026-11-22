@@ -1,0 +1,17 @@
+# Start as a script. Add `static` and types when the function should be checked.
+# `boole opt` says which functions are static, and whether the file can compile native.
+
+def total(items):
+    s = 0
+    for n in items:
+        s = s + n
+    return s
+
+static def total_fast(items: list[int]) -> int:
+    s: int = 0
+    for n in items:
+        s = s + n
+    return s
+
+print(total([1, 2, 3]))
+print(total_fast([1, 2, 3]))

@@ -1,0 +1,6 @@
+try:
+    raise RuntimeError("x")
+except Exception:
+    print("any")
+
+# expect: any

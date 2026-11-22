@@ -1,0 +1,8 @@
+def safe_div(a, b):
+    try:
+        return a // b
+    except Exception:
+        return -1
+print(safe_div(10, 0))
+
+# expect: -1

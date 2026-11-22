@@ -1,0 +1,4 @@
+d = {"n": 3}
+print(len(d))
+
+# expect: 1

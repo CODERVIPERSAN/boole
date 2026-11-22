@@ -1,0 +1,14 @@
+# Mix dynamic and static in one file
+
+def flexible(x):
+    return x
+
+static def double(n: int) -> int:
+    return n * 2
+
+print(flexible("ok"))
+print(double(21))
+
+# Annotated binding is checked when --check or static def is used
+count: int = double(10)
+print(count)

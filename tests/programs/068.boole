@@ -1,0 +1,7 @@
+def f():
+    return g()
+def g():
+    return 7
+print(f())
+
+# expect: 7

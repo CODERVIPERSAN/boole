@@ -1,0 +1,12 @@
+def nest(n):
+    if n == 0:
+        return "zero"
+    elif n == 1:
+        return "one"
+    else:
+        return "other"
+print(nest(0))
+print(nest(2))
+
+# expect: zero
+# expect: other

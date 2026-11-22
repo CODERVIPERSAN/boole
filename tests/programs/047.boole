@@ -1,0 +1,9 @@
+x = 1
+if x > 2:
+    print("a")
+elif x == 1:
+    print("b")
+else:
+    print("c")
+
+# expect: b

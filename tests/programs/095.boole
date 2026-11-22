@@ -1,0 +1,4 @@
+xs = list(range(3))
+print(xs)
+
+# expect: [0, 1, 2]

@@ -1,0 +1,3 @@
+print(isinstance(True, "bool"))
+
+# expect: True

@@ -1,0 +1,3 @@
+print(enumerate([10, 20])[0][1])
+
+# expect: 10

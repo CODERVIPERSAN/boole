@@ -1,0 +1,4 @@
+# Dynamic script — no types required
+print("Hello from Boole")
+name = "world"
+print(f"Hello, {name}!")

@@ -1,0 +1,5 @@
+def id(x):
+    return x
+print(id("z"))
+
+# expect: z

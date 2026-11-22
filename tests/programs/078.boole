@@ -1,0 +1,5 @@
+d = {}
+d["k"] = 5
+print(d["k"])
+
+# expect: 5
