@@ -50,7 +50,7 @@ Legend: `[x]` done · `[ ]` todo
 - [ ] Better errors (file:line + hints)
 - [ ] `boole fmt`
 - [ ] Align folders: fill or remove empty `compiler/`
-- [ ] Full written language spec v0.1
+- [x] Full written language spec v0.1
 
 ---
 
@@ -102,9 +102,24 @@ Legend: `[x]` done · `[ ]` todo
 
 ---
 
+## 7. AI execution engine (layer 2)
+
+Design docs and first compiler contract. Name stays **Boole**. Target includes adaptive backends and a future NL→asm→a.out path; do not claim “world’s first.”
+
+- [x] Engine architecture doc (`docs/engine/architecture.md`)
+- [x] Prior-art / competitor matrix (`docs/engine/prior-art.md`)
+- [x] Importable contract: `boole.engine` (Task, discover, select, Boole backends)
+- [x] Unit tests: Boole → native/interp path; non-Boole → no_backend (no clang)
+- [ ] NL → assembly → a.out backend (no mandatory HLL script)
+- [ ] Sandbox + stronger verification
+- [ ] MCP / richer system awareness
+- [ ] Extra language adapters + cache / scheduler
+
+---
+
 ## How to use this plan
 
-1. Pick the next unchecked item in **§2**, then **§3**.
+1. Pick the next unchecked item in **§2**, then **§3**, then **§7** for engine work.
 2. Implement + prove with tests/benches.
 3. Tick the box here **and** in `list.md`.
 4. New ideas → new checkbox in **both** files under the right section.

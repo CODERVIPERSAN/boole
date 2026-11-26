@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import subprocess
 import sys
 from pathlib import Path
 
@@ -155,11 +156,81 @@ def cmd_version(_args):
     return 0
 
 
+def cmd_asm_run(args):
+    """Pipe or file: assembly text → clang → run (no HLL)."""
+    from boole.asm_run import AsmRunResult, assemble_and_run, extract_assembly
+
+    if args.file:
+        raw = Path(args.file).read_text(encoding="utf-8")
+    else:
+        raw = sys.stdin.read()
+    try:
+        asm = extract_assembly(raw)
+    except ValueError as err:
+        print(f"asm-run: {err}", file=sys.stderr)
+        return 1
+    keep = Path(args.emit_s) if args.emit_s else None
+    out = Path(args.output) if args.output else None
+    result: AsmRunResult = assemble_and_run(
+        asm, out_bin=out, keep_s=keep, run=not args.build_only
+    )
+    if not result.ok:
+        print(result.stderr, file=sys.stderr)
+        return result.exit_code or 1
+    if result.stdout:
+        sys.stdout.write(result.stdout)
+        if not result.stdout.endswith("\n"):
+            sys.stdout.write("\n")
+    if args.build_only and result.binary_path:
+        print(result.binary_path)
+    return result.exit_code if result.exit_code is not None else 0
+
+
+def cmd_nl_asm(args):
+    """Natural language → Ollama → GAS → clang → run."""
+    from boole.asm_run import nl_to_binary_run
+
+    # Join remainder so shell-broken quotes still form one prompt:
+    #   nl-asm print("hello world")  →  print( hello world )
+    if isinstance(args.prompt, list):
+        prompt = " ".join(args.prompt).strip()
+    else:
+        prompt = (args.prompt or "").strip()
+    if not prompt:
+        prompt = sys.stdin.read().strip()
+    if not prompt:
+        print("nl-asm: need a prompt (argument or stdin)", file=sys.stderr)
+        return 1
+    keep = Path(args.emit_s) if args.emit_s else None
+    try:
+        result = nl_to_binary_run(
+            prompt,
+            model=args.model,
+            emit_s=keep,
+            retries=getattr(args, "retries", 1),
+        )
+    except (RuntimeError, subprocess.TimeoutExpired) as err:
+        print(f"nl-asm: {err}", file=sys.stderr)
+        return 1
+    if args.show_asm or args.show_raw:
+        print(result.asm, file=sys.stderr)
+    if not result.ok:
+        print(result.stderr, file=sys.stderr)
+        print("--- asm that failed ---", file=sys.stderr)
+        print(result.asm, file=sys.stderr)
+        return result.exit_code or 1
+    sys.stdout.write(result.stdout or "")
+    if result.stdout and not result.stdout.endswith("\n"):
+        sys.stdout.write("\n")
+    return result.exit_code if result.exit_code is not None else 0
+
+
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     # bare: boole file.boole
     if argv and not argv[0].startswith("-") and argv[0] not in {
         "run", "build", "check", "opt", "test", "bench", "parse", "lex", "version", "help",
+        "asm-run", "nl-asm",
     } and argv[0].endswith(".boole"):
         return cmd_run(argparse.Namespace(file=argv[0], check=False, interp=False, strict_native=False))
 
@@ -207,6 +278,34 @@ def main(argv=None):
 
     p_ver = sub.add_parser("version", help="print version")
     p_ver.set_defaults(func=cmd_version)
+
+    p_asm = sub.add_parser("asm-run", help="pipe/file GAS → clang -nostdlib → run")
+    p_asm.add_argument("file", nargs="?", help=".s file (default: stdin)")
+    p_asm.add_argument("-o", "--output", help="keep binary at this path")
+    p_asm.add_argument("--emit-s", help="also write extracted assembly here")
+    p_asm.add_argument("--build-only", action="store_true", help="assemble only, do not run")
+    p_asm.set_defaults(func=cmd_asm_run)
+
+    p_nl = sub.add_parser(
+        "nl-asm",
+        help="NL → LLM (asm_rules.txt) → GAS → clang → run",
+    )
+    p_nl.add_argument("--model", default="llama3.2", help="ollama model (default llama3.2)")
+    p_nl.add_argument("--emit-s", help="write extracted .s here")
+    p_nl.add_argument("--show-raw", action="store_true", help="print LLM output on stderr")
+    p_nl.add_argument("--show-asm", action="store_true", help="print extracted asm on stderr")
+    p_nl.add_argument(
+        "--retries",
+        type=int,
+        default=2,
+        help="re-ask LLM with assemble/preflight errors (default 2)",
+    )
+    p_nl.add_argument(
+        "prompt",
+        nargs=argparse.REMAINDER,
+        help="any natural language / code slang; put flags before the sentence",
+    )
+    p_nl.set_defaults(func=cmd_nl_asm)
 
     args = parser.parse_args(argv)
     if args.version:
