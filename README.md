@@ -25,14 +25,16 @@ export PYTHONPATH=/home/sandy/boole   # or: pip install -e .
 | Command | `boole` |
 | Manifest | `Boole.toml` (planned) |
 | Spec | `docs/spec/v0.1/` + `PLAN.md` |
+| Engine | `docs/engine/` (adaptive backends; contracts to this compiler) |
 
 ## What you get
 
 - **Scripts like Python** — no types required
 - **Production typing** — `static def` or `# boole: static`
 - **Native by default** — Boole → C → `clang -O3 -flto`
-- **Interpreter fallback** — classes, `try`/`except`, imports
+- **Interpreter fallback** — edges the native backend rejects (e.g. some `sys` imports)
 - **Memory safety** — refcounted runtime; you never call `free`
+- **Execution engine (design)** — capability probe + backend selector in front of this compiler; see `docs/engine/`
 
 ```boole
 # dynamic script
@@ -49,7 +51,7 @@ static def add(a: int, b: int) -> int:
 ```text
 boole test   → 100 passed, 0 failed
 boole bench  → sum_loop ~1000× vs CPython (run time of built binary)
-pytest       → 11 passed
+pytest       → engine + CLI tests
 ```
 
 Hot loops win because ints stay unboxed in generated C. Compile time is separate (~0.3–0.4s with LTO); use `boole build` once, then run the binary.
@@ -69,15 +71,16 @@ Hot loops win because ints stay unboxed in generated C. Compile time is separate
 ## Layout
 
 ```
-boole/           # compiler (Python host)
+boole/           # compiler (Python host) + engine.py contract
 runtime/         # C runtime (refcounted values)
 tests/programs/  # 100 language programs
 benchmarks/
 examples/
-docs/spec/v0.1/
+docs/spec/v0.1/  # language as-built
+docs/engine/     # AI execution engine design
 PLAN.md          # full single-shot plan
 ```
 
 ## Honest limits
 
-Not self-hosting. Native backend does not yet emit classes/`try`/imports (falls back to interp). Not a replacement for every Rust/C++/Python ecosystem — a usable language core you can write scripts and typed modules in today.
+Not self-hosting. Not an NL→binary product yet (that path is documented as a future engine backend). Not a replacement for every Rust/C++/Python ecosystem — a usable language core you can write scripts and typed modules in today, with an adaptive engine layer starting to contract to this compiler.
